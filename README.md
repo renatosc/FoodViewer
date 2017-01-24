@@ -18,3 +18,7 @@ The app uses the various taxonomies defined by OFF (status, allergens, additives
 
 ## Requirements
 This application is written in Swift 2.2 using Xcode 7.3. Target is IOS 9.2
+
+## Version History
+
+- 1.4 supports editing and updating of fields
