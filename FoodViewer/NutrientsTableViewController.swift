@@ -720,9 +720,14 @@ extension NutrientsTableViewController: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        var section = textField.tag
         // the tag is a combination of the section and the row
         // section*100 + row
-        let section = (textField.tag - textField.tag % 100)/100
+        if section != 4 {
+            section = (section - section % 100) / 100
+        }
+        
         let (currentProductSection, _, _) = tableStructureForProduct[section]
         
         switch currentProductSection {
