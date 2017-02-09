@@ -722,8 +722,8 @@ class NutrientsTableViewController: UITableViewController, UIPopoverPresentation
     func refreshProductWithNewNutritionFacts() {
         guard product != nil else { return }
         // recalculate the nutritionfacts that must be shown
-        tableStructureForProduct = analyseProductForTable(product!)
         mergeNutritionFacts()
+        tableStructureForProduct = analyseProductForTable(product!)
         tableView.reloadData()
     }
 
