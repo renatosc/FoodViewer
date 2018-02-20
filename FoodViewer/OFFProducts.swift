@@ -153,7 +153,7 @@ class OFFProducts {
                     case .success:
                         self.loadSampleImages()
                         NotificationCenter.default.post(name: .FirstProductLoaded, object:nil)
-                    case .loadingFailed(let error):
+                    case .loadingFailed(_, let error):
                         let userInfo = ["error":error]
                         self.handleLoadingFailed(userInfo)
                     case .productNotAvailable(let error):
@@ -254,7 +254,7 @@ class OFFProducts {
                                 userInfo[Notification.BarcodeKey] = product.barcode.asString()
                                 NotificationCenter.default.post(name: .ProductLoaded, object:nil, userInfo: userInfo)
                             }
-                        case .loadingFailed(let error):
+                        case .loadingFailed(_, let error):
                             self.historyLoadCount! += 1
                             let userInfo = ["error":error]
                             self.handleLoadingFailed(userInfo)
@@ -328,7 +328,7 @@ class OFFProducts {
                             // self.loadMainImage(newProduct)
                             self.saveMostRecentProduct(barcode!)
                             NotificationCenter.default.post(name: .FirstProductLoaded, object:nil)
-                        case .loadingFailed(let error):
+                        case .loadingFailed(_, let error):
                             self.allProductFetchResultList.insert(fetchResult, at:0)
                             self.setCurrentProducts()
                             let userInfo = ["error":error]
@@ -454,7 +454,7 @@ class OFFProducts {
                     var userInfo: [String:Any] = [:]
                     userInfo[Notification.BarcodeKey] = newProduct.barcode.asString()
                     NotificationCenter.default.post(name: .ProductUpdated, object:nil, userInfo: userInfo)
-                case .loadingFailed(let error):
+                case .loadingFailed(_, let error):
                     let userInfo = ["error":error]
                     self.handleLoadingFailed(userInfo)
                 case .productNotAvailable(let error):
@@ -503,7 +503,7 @@ class OFFProducts {
                                     } else {
                                         print("OFFProducts - stored product not in history file")
                                     }
-                                case .loadingFailed(let error):
+                                case .loadingFailed(_, let error):
                                     let userInfo = ["error":error]
                                     self.handleLoadingFailed(userInfo)
                                 case .productNotAvailable:
@@ -675,7 +675,7 @@ class OFFProducts {
                         let userInfo: [String:Any] = [Notification.SearchStringKey:"What to put here?",
                                     Notification.SearchOffsetKey:searchResult.1 * searchResult.2]
                         NotificationCenter.default.post(name: .SearchLoaded, object:nil, userInfo: userInfo)
-                    case .loadingFailed(let error):
+                    case .loadingFailed(_, let error):
                         let userInfo = ["error":error]
                         self.handleLoadingFailed(userInfo)
                     case .productNotAvailable(let error):

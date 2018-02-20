@@ -20,7 +20,7 @@ enum ProductFetchStatus {
     // The more parameter defines the search next page to retrieve
     case more(Int)
     case productNotAvailable(String)
-    case loadingFailed(String)
+    case loadingFailed(String, String) // Barcode and Error message
     case initialized
     case other(String)
 

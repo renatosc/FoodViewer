@@ -61,10 +61,10 @@ class OpenFoodFactsRequest {
                 return unpackJSONObject(JSON(data: data))
             } catch let error as NSError {
                 if debug { print("OpenFoodFactsRequest:fetchJsonForBarcode(_:_) - \(error.description)") }
-                return ProductFetchStatus.loadingFailed(error.description)
+                return ProductFetchStatus.loadingFailed(barcode.asString(), error.description)
             }
         } else {
-            return ProductFetchStatus.loadingFailed(NSLocalizedString("Error: URL not matched", comment: "Retrieved a json file that is no longer relevant for the app."))
+            return ProductFetchStatus.loadingFailed(barcode.asString(), NSLocalizedString("Error: URL not matched", comment: "Retrieved a json file that is no longer relevant for the app."))
         }
     }
 
@@ -161,14 +161,14 @@ class OpenFoodFactsRequest {
                     return unpackJSONObject(JSON(data: data))
                 } catch let error as NSError {
                     print(error);
-                    return ProductFetchStatus.loadingFailed(error.description)
+                    return ProductFetchStatus.loadingFailed("search", error.description)
                 }
             } else {
-                return ProductFetchStatus.loadingFailed("Retrieved a json file that is no longer relevant for the app.")
+                return ProductFetchStatus.loadingFailed("search", "Retrieved a json file that is no longer relevant for the app.")
             }
             
         } else {
-            return ProductFetchStatus.loadingFailed("Search URL could not be encoded.")
+            return ProductFetchStatus.loadingFailed("search", "Search URL could not be encoded.")
         }
     }
 
@@ -187,7 +187,7 @@ class OpenFoodFactsRequest {
         if let validData = data {
             return unpackJSONObject(JSON(data: validData))
         } else {
-            return ProductFetchStatus.loadingFailed(NSLocalizedString("Error: No valid data", comment: "No valid data has been received"))
+            return ProductFetchStatus.loadingFailed("sample", NSLocalizedString("Error: No valid data", comment: "No valid data has been received"))
         }
     }
     
@@ -226,7 +226,10 @@ class OpenFoodFactsRequest {
                 if let statusVerbose = jsonObject[jsonKeys.StatusVerboseKey].string {
                     return ProductFetchStatus.productNotAvailable(statusVerbose)
                 } else {
-                    return ProductFetchStatus.loadingFailed(NSLocalizedString("Error: No verbose status", comment: "The JSON file is wrongly formatted."))
+                    if let code = jsonObject[jsonKeys.CodeKey].string {
+                        return ProductFetchStatus.loadingFailed(code, "The JSON file is wrongly formatted.")
+                    }
+                    return ProductFetchStatus.loadingFailed("no code", "The JSON file is wrongly formatted.")
                 }
                 
             } else if resultStatus == 1 {
@@ -234,7 +237,10 @@ class OpenFoodFactsRequest {
                 // print(product.name, product.nutritionFacts)
                 return ProductFetchStatus.success(decode(JSON.init(jsonObject[jsonKeys.ProductKey].dictionaryValue) ))
             } else {
-                return ProductFetchStatus.loadingFailed(NSLocalizedString("Error: Other (>1) result status", comment: "A JSON status which is not supported."))
+                if let code = jsonObject[jsonKeys.CodeKey].string {
+                    return ProductFetchStatus.loadingFailed(code, "A JSON status which is not supported.")
+                }
+                return ProductFetchStatus.loadingFailed("no code", "A JSON status which is not supported.")
             }
         // is this a multi product page?
         } else if let searchResultSize = jsonObject[jsonKeys.CountKey].int {
@@ -252,10 +258,10 @@ class OpenFoodFactsRequest {
                 }
                 return ProductFetchStatus.searchList((searchResultSize, searchPage, searchPageSize, products))
             } else {
-                return ProductFetchStatus.loadingFailed(NSLocalizedString("Error: Not a valid Search array", comment: "Error message when the json input file does not contain any information") )
+                return ProductFetchStatus.loadingFailed("search", NSLocalizedString("Error: Not a valid Search array", comment: "Error message when the json input file does not contain any information") )
             }
         } else {
-            return ProductFetchStatus.loadingFailed(NSLocalizedString("Error: Not a valid OFF JSON", comment: "Error message when the json input file does not contain any information") )
+            return ProductFetchStatus.loadingFailed("search", NSLocalizedString("Error: Not a valid OFF JSON", comment: "Error message when the json input file does not contain any information") )
         }
 
     }

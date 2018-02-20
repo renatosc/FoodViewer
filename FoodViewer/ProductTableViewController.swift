@@ -551,8 +551,8 @@ class ProductTableViewController: UITableViewController, UITextFieldDelegate, Ke
             case .more:
                 // no header required in this case https://world.openfoodfacts.org/api/v0/product/737628064502.json
                 return nil
-            case.loadingFailed(let error):
-                label.text = error
+            case.loadingFailed(let barcode, let error):
+                label.text = barcode
                 // Can we supply a specific error message?
                 if error.contains("NSCocoaErrorDomain Code=256") {
                     // The error message when the server can not be reached:
@@ -564,6 +564,7 @@ class ProductTableViewController: UITableViewController, UITextFieldDelegate, Ke
                             label.text = partsTwo[1]
                         }
                     }
+                    // Error Domain=NSURLErrorDomain Code=-1009 "The Internet connection appears to be offline."
                 }
                 
             case .searchQuery(let query):
@@ -1077,7 +1078,7 @@ extension ProductTableViewController: TagListViewDataSource {
             let fetchStatus = ProductFetchStatus.more(0)
             return fetchStatus.description()
         } else if tagListView.tag == Storyboard.CellTag.LoadingFailed {
-            let fetchStatus = ProductFetchStatus.loadingFailed(TranslatableStrings.LoadingFailed)
+            let fetchStatus = ProductFetchStatus.loadingFailed("product", TranslatableStrings.LoadingFailed)
             return fetchStatus.description()
         } else if tagListView.tag == Storyboard.CellTag.Image {
             return TranslatableStrings.NoImageInTheRightLanguage
